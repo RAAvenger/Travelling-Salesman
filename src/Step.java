@@ -27,11 +27,27 @@ public class Step implements Comparable {
     }
 
     /**
+     * get best neighbor as next step.
+     *
+     * @return next step.
+     */
+    public Step GetNextStep() {
+        LinkedList<Step> neighbors = GetNeighborLocations();
+        Step best = neighbors.getFirst();
+        for (Step neighbore : neighbors) {
+            if (best.cost > neighbore.cost) {
+                best = neighbore;
+            }
+        }
+        return best;
+    }
+
+    /**
      * create next possible steps using current step by swapping two cities.
      *
      * @return all neighbors of current location.
      */
-    public LinkedList<Step> GetNeighborLocations() {
+    private LinkedList<Step> GetNeighborLocations() {
         LinkedList<Step> neighbors = new LinkedList<Step>();
         for (int i = 0; i < location.length; i++) {
             for (int j = i + 1; i < location.length; i++) {
