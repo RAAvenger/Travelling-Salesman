@@ -23,6 +23,7 @@ public class Step implements Comparable {
             city2 = location[i + 1];
             cost += regionMap[city1][city2];
         }
+        cost += regionMap[location[location.length - 1]][location[0]];
         return cost;
     }
 
@@ -90,6 +91,7 @@ public class Step implements Comparable {
         String result = "Cost: " + this.cost + "\nPath: ";
         for (int i = 0; i < location.length; i++)
             result += "" + location[i] + ", ";
+        result += "" + location[0] + ", ";
         return result + "\b\b.";
     }
 }
