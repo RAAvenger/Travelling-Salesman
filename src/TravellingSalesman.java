@@ -3,11 +3,13 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class TravellingSalesman {
+    int tryCount = 20;
+
     public static void main(String[] args) {
         TravellingSalesman This = new TravellingSalesman();
         int[][] map = This.ReadInput();
         Step bestPath = null;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < This.tryCount; i++) {
             Step currentStep = null;
             Step newStep = This.CreatRandomStep(map);
             do {
@@ -50,6 +52,7 @@ public class TravellingSalesman {
      * @return matrix of distances.
      */
     public int[][] ReadInput() {
+        System.out.println("Input your numbers( you can use test inputs at \"test/\" directory. ) :");
         Scanner scanner = new Scanner(System.in);
         int cityCount = scanner.nextInt();
         int[][] map = new int[cityCount][cityCount];
