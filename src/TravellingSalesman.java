@@ -35,12 +35,9 @@ public class TravellingSalesman {
             location[i] = i;
         }
         for (int i = 0; i < map[0].length; i++) {
-            int index1 = new Random(new Date().getTime()).nextInt(map[0].length - 1);
-            int index2 = new Random(new Date().getTime()).nextInt(map[0].length - 1);
-            if (index1 == index2)
-                index2 = new Random(new Date().getTime()).nextInt(map[0].length - 1);
-            int temp = location[index1];
-            location[index1] = location[index2];
+            int index2 = new Random(new Date().getTime()).nextInt(map[0].length);
+            int temp = location[i];
+            location[i] = location[index2];
             location[index2] = temp;
         }
         return new Step(location, map);
