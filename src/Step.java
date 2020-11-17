@@ -29,17 +29,17 @@ public class Step implements Comparable {
     /**
      * get best neighbor as next step.
      *
-     * @return next step.
+     * @return next step or null if no neighbor step is better than current step.
      */
     public Step GetNextStep() {
         LinkedList<Step> neighbors = GetNeighborLocations();
-        Step best = neighbors.getFirst();
-        for (Step neighbore : neighbors) {
-            if (best.cost > neighbore.cost) {
-                best = neighbore;
+        Step best = this;
+        for (Step neighbor : neighbors) {
+            if (best.cost > neighbor.cost) {
+                best = neighbor;
             }
         }
-        return best;
+        return best == this ? null : best;
     }
 
     /**
@@ -79,5 +79,17 @@ public class Step implements Comparable {
     public int compareTo(Object o) {
         Step object = (Step) o;
         return cost - object.cost;
+    }
+
+    /**
+     * creat a string to show step cost and path.
+     *
+     * @return string.
+     */
+    public String Print() {
+        String result = "Cost: " + this.cost + "\nPath: ";
+        for (int i = 0; i < location.length; i++)
+            result += "" + location[i] + ", ";
+        return result + "\b\b.";
     }
 }
