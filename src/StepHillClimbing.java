@@ -1,11 +1,11 @@
 import java.util.LinkedList;
 
-public class Step implements Comparable {
+public class StepHillClimbing implements Comparable {
     int cost;
     int[] location;
     int[][] regionMap;
 
-    public Step(int[] location, int[][] regionMap) {
+    public StepHillClimbing(int[] location, int[][] regionMap) {
         this.location = location.clone();
         this.regionMap = regionMap;
         this.cost = CalculateCostOfLocation();
@@ -32,10 +32,10 @@ public class Step implements Comparable {
      *
      * @return next step or null if no neighbor step is better than current step.
      */
-    public Step GetNextStep() {
-        LinkedList<Step> neighbors = GetNeighborLocations();
-        Step best = this;
-        for (Step neighbor : neighbors) {
+    public StepHillClimbing GetNextStep() {
+        LinkedList<StepHillClimbing> neighbors = GetNeighborLocations();
+        StepHillClimbing best = this;
+        for (StepHillClimbing neighbor : neighbors) {
             if (best.cost > neighbor.cost) {
                 best = neighbor;
             }
@@ -48,12 +48,12 @@ public class Step implements Comparable {
      *
      * @return all neighbors of current location.
      */
-    private LinkedList<Step> GetNeighborLocations() {
-        LinkedList<Step> neighbors = new LinkedList<Step>();
+    private LinkedList<StepHillClimbing> GetNeighborLocations() {
+        LinkedList<StepHillClimbing> neighbors = new LinkedList<StepHillClimbing>();
         for (int i = 0; i < location.length; i++) {
             for (int j = i + 1; i < location.length; i++) {
                 int[] newNeighborLocation = SwapCities(i, j, location);
-                Step newNeighbor = new Step(newNeighborLocation, regionMap);
+                StepHillClimbing newNeighbor = new StepHillClimbing(newNeighborLocation, regionMap);
                 neighbors.add(newNeighbor);
             }
         }
@@ -78,7 +78,7 @@ public class Step implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        Step object = (Step) o;
+        StepHillClimbing object = (StepHillClimbing) o;
         return cost - object.cost;
     }
 

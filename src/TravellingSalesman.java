@@ -3,15 +3,23 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class TravellingSalesman {
-    int tryCount = 20;
+    int tryTimeSec = 10;
 
     public static void main(String[] args) {
         TravellingSalesman This = new TravellingSalesman();
         int[][] map = This.ReadInput();
-        Step bestPath = null;
-        for (int i = 0; i < This.tryCount; i++) {
-            Step currentStep = null;
-            Step newStep = This.CreatRandomStep(map);
+        This.Algorithm1(map);
+    }
+
+    /**
+     * solve travelling salesman by Hill Climbing Algorithm.
+     */
+    private void Algorithm1(int[][] map) {
+        StepHillClimbing bestPath = null;
+        long startTime = new Date().getTime();
+        while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
+            StepHillClimbing currentStep = null;
+            StepHillClimbing newStep = new StepHillClimbing(this.CreatRandomStep(map), map);
             do {
                 currentStep = newStep;
                 newStep = currentStep.GetNextStep();
@@ -19,9 +27,7 @@ public class TravellingSalesman {
             bestPath = bestPath == null || bestPath.cost > currentStep.cost ? currentStep : bestPath;
         }
         System.out.println(bestPath.Print());
-        return;
     }
-
 
     /**
      * creat a step with random order of cities.
@@ -29,7 +35,7 @@ public class TravellingSalesman {
      * @param map matrix of distances.
      * @return new state wit random location;
      */
-    private Step CreatRandomStep(int[][] map) {
+    private int[] CreatRandomStep(int[][] map) {
         int[] location = new int[map[0].length];
         for (int i = 0; i < map[0].length; i++) {
             location[i] = i;
@@ -40,7 +46,7 @@ public class TravellingSalesman {
             location[i] = location[index2];
             location[index2] = temp;
         }
-        return new Step(location, map);
+        return location;
     }
 
     /**
