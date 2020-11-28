@@ -1,14 +1,16 @@
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
 
 public class TravellingSalesman {
     int tryTimeSec = 10;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         TravellingSalesman This = new TravellingSalesman();
         int[][] map = This.ReadInput();
-        This.Algorithm1(map);
+//        This.Algorithm1(map);
+        This.Algorithm2(map);
     }
 
     /**
@@ -27,6 +29,25 @@ public class TravellingSalesman {
             bestPath = bestPath == null || bestPath.cost > currentStep.cost ? currentStep : bestPath;
         }
         System.out.println(bestPath.Print());
+    }
+
+    /**
+     * solve travelling salesman by Local Beam Search Algorithm.
+     */
+    private void Algorithm2(int[][] map) throws Exception {
+        int beamWidth = 100;
+        for (int c = 0; c < 3; c++) {
+            LinkedList<LineOfLight> startingBeam = new LinkedList<LineOfLight>();
+            for (int i = 0; i < beamWidth; i++) {
+                startingBeam.add(new LineOfLight(map, CreatRandomStep(map)));
+            }
+            BeamOfLight beam = new BeamOfLight(map, startingBeam, beamWidth);
+            long startTime = new Date().getTime();
+            while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
+                beam.CreatNextBeam((int) (new Date().getTime()), tryTimeSec * 1000);
+            }
+            System.out.println(beam.PrintBestPath());
+        }
     }
 
     /**
