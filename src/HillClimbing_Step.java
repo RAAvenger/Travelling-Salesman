@@ -1,11 +1,11 @@
 import java.util.LinkedList;
 
-public class StepHillClimbing implements Comparable {
+public class HillClimbing_Step implements Comparable {
     int cost;
     int[] location;
     int[][] regionMap;
 
-    public StepHillClimbing(int[] location, int[][] regionMap) {
+    public HillClimbing_Step(int[] location, int[][] regionMap) {
         this.location = location.clone();
         this.regionMap = regionMap;
         this.cost = CalculateCostOfLocation();
@@ -32,10 +32,10 @@ public class StepHillClimbing implements Comparable {
      *
      * @return next step or null if no neighbor step is better than current step.
      */
-    public StepHillClimbing GetNextStep() {
-        LinkedList<StepHillClimbing> neighbors = GetNeighborLocations();
-        StepHillClimbing best = this;
-        for (StepHillClimbing neighbor : neighbors) {
+    public HillClimbing_Step GetNextStep() {
+        LinkedList<HillClimbing_Step> neighbors = GetNeighborLocations();
+        HillClimbing_Step best = this;
+        for (HillClimbing_Step neighbor : neighbors) {
             if (best.cost > neighbor.cost) {
                 best = neighbor;
             }
@@ -48,12 +48,12 @@ public class StepHillClimbing implements Comparable {
      *
      * @return all neighbors of current location.
      */
-    private LinkedList<StepHillClimbing> GetNeighborLocations() {
-        LinkedList<StepHillClimbing> neighbors = new LinkedList<StepHillClimbing>();
+    private LinkedList<HillClimbing_Step> GetNeighborLocations() {
+        LinkedList<HillClimbing_Step> neighbors = new LinkedList<HillClimbing_Step>();
         for (int i = 0; i < location.length; i++) {
             for (int j = i + 1; i < location.length; i++) {
                 int[] newNeighborLocation = SwapCities(i, j, location);
-                StepHillClimbing newNeighbor = new StepHillClimbing(newNeighborLocation, regionMap);
+                HillClimbing_Step newNeighbor = new HillClimbing_Step(newNeighborLocation, regionMap);
                 neighbors.add(newNeighbor);
             }
         }
@@ -78,12 +78,12 @@ public class StepHillClimbing implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        StepHillClimbing object = (StepHillClimbing) o;
+        HillClimbing_Step object = (HillClimbing_Step) o;
         return cost - object.cost;
     }
 
     /**
-     * creat a string to show step cost and path.
+     * create a string to show step cost and path.
      *
      * @return string.
      */
