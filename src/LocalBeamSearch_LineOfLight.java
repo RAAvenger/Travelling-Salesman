@@ -1,11 +1,11 @@
 import java.util.LinkedList;
 
-public class LineOfLight implements Comparable {
+public class LocalBeamSearch_LineOfLight implements Comparable {
     int cost;
     int[] lineOfLight;
     int[][] regionMap;
 
-    public LineOfLight(int[][] regionMap, int[] lineOfLight) {
+    public LocalBeamSearch_LineOfLight(int[][] regionMap, int[] lineOfLight) {
         this.regionMap = regionMap;
         this.lineOfLight = lineOfLight;
         cost = CalculateCost();
@@ -28,16 +28,16 @@ public class LineOfLight implements Comparable {
     }
 
     /**
-     * creat all lines of light close to this one.
+     * create all lines of light close to this one.
      *
      * @return linkedList of lineOfLight.
      */
-    public LinkedList<LineOfLight> GetCloseLinesOfLight() {
-        LinkedList<LineOfLight> linesOfLight = new LinkedList<>();
+    public LinkedList<LocalBeamSearch_LineOfLight> GetCloseLinesOfLight() {
+        LinkedList<LocalBeamSearch_LineOfLight> linesOfLight = new LinkedList<>();
         for (int i = 0; i < lineOfLight.length; i++) {
             for (int j = i + 1; i < lineOfLight.length; i++) {
                 int[] newNeighborLocation = SwapCities(i, j, lineOfLight);
-                linesOfLight.add(new LineOfLight(regionMap, newNeighborLocation));
+                linesOfLight.add(new LocalBeamSearch_LineOfLight(regionMap, newNeighborLocation));
             }
         }
         return linesOfLight;
@@ -61,12 +61,12 @@ public class LineOfLight implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        StepHillClimbing object = (StepHillClimbing) o;
+        HillClimbing_Step object = (HillClimbing_Step) o;
         return cost - object.cost;
     }
 
     /**
-     * creat a string to show step cost and path.
+     * create a string to show step cost and path.
      *
      * @return string.
      */

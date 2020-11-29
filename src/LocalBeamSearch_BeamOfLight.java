@@ -1,15 +1,15 @@
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class BeamOfLight {
+public class LocalBeamSearch_BeamOfLight {
     int beamWidth;
     int worstCostInBeam;
-    LinkedList<LineOfLight> linesOfLight;
-    LinkedList<LineOfLight> randomLinesOfLight;
+    LinkedList<LocalBeamSearch_LineOfLight> linesOfLight;
+    LinkedList<LocalBeamSearch_LineOfLight> randomLinesOfLight;
     int[][] regionMap;
+    private Random randomGenerator;
 
-    public BeamOfLight(int[][] regionMap, LinkedList<LineOfLight> LinesOfLight, int beamWidth) throws Exception {
+    public LocalBeamSearch_BeamOfLight(int[][] regionMap, LinkedList<LocalBeamSearch_LineOfLight> LinesOfLight, int beamWidth, Random randomGenerator) throws Exception {
         if (LinesOfLight.size() != beamWidth)
             throw new Exception("LinesOfLight's size is noe equal to beamWidth.");
         this.regionMap = regionMap;
@@ -17,6 +17,7 @@ public class BeamOfLight {
         randomLinesOfLight = new LinkedList<>();
         this.beamWidth = beamWidth;
         worstCostInBeam = GetMaxCostInBeam();
+        this.randomGenerator = randomGenerator;
     }
 
     /**
@@ -26,34 +27,30 @@ public class BeamOfLight {
      */
     private int GetMaxCostInBeam() {
         int max = 0;
-        for (LineOfLight line : linesOfLight) {
+        for (LocalBeamSearch_LineOfLight line : linesOfLight) {
             if (line.cost > max)
                 max = line.cost;
         }
         return max;
     }
 
-    private int GetMinCostInBeam() {
-        int max = Integer.MAX_VALUE;
-        for (LineOfLight line : linesOfLight) {
-            if (line.cost < max)
-                max = line.cost;
-        }
-        return max;
-    }
-
-    public void CreatNextBeam(int randomFactor, int runTime) {
-        LinkedList<LineOfLight> tempLinesOfLight = (LinkedList<LineOfLight>) linesOfLight.clone();
-        tempLinesOfLight.addAll((Collection<? extends LineOfLight>) randomLinesOfLight.clone());
+    /**
+     * creating next beam of light using current beam and random lines.
+     *
+     * @param randomFactor possibility of choosing a random line and adding it to the randomLinesOfLight list.
+     */
+    public void CreateNextBeam(int randomFactor) {
+        LinkedList<LocalBeamSearch_LineOfLight> tempLinesOfLight = (LinkedList<LocalBeamSearch_LineOfLight>) linesOfLight.clone();
+        tempLinesOfLight.addAll((LinkedList<LocalBeamSearch_LineOfLight>) randomLinesOfLight.clone());
         randomLinesOfLight.clear();
-        for (LineOfLight line : tempLinesOfLight) {
-            LinkedList<LineOfLight> newLines = line.GetCloseLinesOfLight();
-            for (LineOfLight newLine : newLines) {
+        for (LocalBeamSearch_LineOfLight line : tempLinesOfLight) {
+            LinkedList<LocalBeamSearch_LineOfLight> newLines = line.GetCloseLinesOfLight();
+            for (LocalBeamSearch_LineOfLight newLine : newLines) {
                 if (newLine.cost < worstCostInBeam)
                     AddNewLineOfLightToBeam(newLine);
                 else {
-                    int score = Math.round(new Random().nextInt(runTime / 2) / randomFactor);
-                    if (score != 0) {
+                    int score = randomGenerator.nextInt(1000);
+                    if (score < randomFactor && randomLinesOfLight.size() < beamWidth * 10) {
                         randomLinesOfLight.add(newLine);
                     }
                 }
@@ -61,7 +58,12 @@ public class BeamOfLight {
         }
     }
 
-    private void AddNewLineOfLightToBeam(LineOfLight newLine) {
+    /**
+     * get new line and add it to beam then remove one of lines with max cost.
+     *
+     * @param newLine new line of light with better cost than max beam cost.
+     */
+    private void AddNewLineOfLightToBeam(LocalBeamSearch_LineOfLight newLine) {
         for (int i = 0; i < beamWidth; i++) {
             if (linesOfLight.get(i).cost == worstCostInBeam) {
                 linesOfLight.remove(i);
@@ -72,6 +74,9 @@ public class BeamOfLight {
         linesOfLight.add(newLine);
     }
 
+    /**
+     * search beam and random lines for the best path( path with minimum cost ) then return its cost and path as a string.
+     */
     public String PrintBestPath() {
         int index = 0, rIndex = -1;
         int bestCost = linesOfLight.getFirst().cost;

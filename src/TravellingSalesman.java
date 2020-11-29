@@ -5,23 +5,25 @@ import java.util.Scanner;
 
 public class TravellingSalesman {
     int tryTimeSec = 10;
+    private Random randomGenerator = new Random(new Date().getTime());
 
     public static void main(String[] args) throws Exception {
         TravellingSalesman This = new TravellingSalesman();
         int[][] map = This.ReadInput();
 //        This.Algorithm1(map);
         This.Algorithm2(map);
+//        This.Algorithm3(map);
     }
 
     /**
      * solve travelling salesman by Hill Climbing Algorithm.
      */
     private void Algorithm1(int[][] map) {
-        StepHillClimbing bestPath = null;
+        HillClimbing_Step bestPath = null;
         long startTime = new Date().getTime();
         while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
-            StepHillClimbing currentStep = null;
-            StepHillClimbing newStep = new StepHillClimbing(this.CreatRandomStep(map), map);
+            HillClimbing_Step currentStep = null;
+            HillClimbing_Step newStep = new HillClimbing_Step(this.CreateRandomOrderOfCities(map), map);
             do {
                 currentStep = newStep;
                 newStep = currentStep.GetNextStep();
@@ -35,34 +37,53 @@ public class TravellingSalesman {
      * solve travelling salesman by Local Beam Search Algorithm.
      */
     private void Algorithm2(int[][] map) throws Exception {
-        int beamWidth = 100;
-        for (int c = 0; c < 3; c++) {
-            LinkedList<LineOfLight> startingBeam = new LinkedList<LineOfLight>();
-            for (int i = 0; i < beamWidth; i++) {
-                startingBeam.add(new LineOfLight(map, CreatRandomStep(map)));
-            }
-            BeamOfLight beam = new BeamOfLight(map, startingBeam, beamWidth);
-            long startTime = new Date().getTime();
-            while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
-                beam.CreatNextBeam((int) (new Date().getTime()), tryTimeSec * 1000);
-            }
-            System.out.println(beam.PrintBestPath());
+        int beamWidth = 10;
+//        for (int resets = 3; resets > 0; resets--) {
+        LinkedList<LocalBeamSearch_LineOfLight> startingBeam = new LinkedList<LocalBeamSearch_LineOfLight>();
+        for (int i = 0; i < beamWidth; i++) {
+            startingBeam.add(new LocalBeamSearch_LineOfLight(map, CreateRandomOrderOfCities(map)));
         }
+        LocalBeamSearch_BeamOfLight beam = new LocalBeamSearch_BeamOfLight(map, startingBeam, beamWidth, randomGenerator);
+        long startTime = new Date().getTime();
+        while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
+            int randomFactor = (int) (((startTime + tryTimeSec * 1000) - new Date().getTime()) / (tryTimeSec));
+            beam.CreateNextBeam(randomFactor / 3);
+        }
+        System.out.println(beam.PrintBestPath());
+//        }
     }
 
+//    /**
+//     * solve travelling salesman by Genetic Algorithm.
+//     */
+//    private void Algorithm3(int[][] map) {
+//        Genetic_Population population;
+//        LinkedList<Genetic_Chromosome> startingChromosoms = new LinkedList<>();
+//        for (int i = 0; i < 10; i++) {
+//            startingChromosoms.add(new Genetic_Chromosome(map, CreateRandomOrderOfCities(map)));
+//        }
+//        population = new Genetic_Population(map, startingChromosoms, 10);
+//        long startTime = new Date().getTime();
+////        while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
+//        while (true) {
+//            population.CreateNextGeneration((int) (((tryTimeSec * 1000 - (new Date().getTime())) / tryTimeSec * 1000) * 1000));
+//        }
+////        System.out.println(bestPath.Print());
+//    }
+
     /**
-     * creat a step with random order of cities.
+     * create a step with random order of cities.
      *
      * @param map matrix of distances.
      * @return new state wit random location;
      */
-    private int[] CreatRandomStep(int[][] map) {
+    private int[] CreateRandomOrderOfCities(int[][] map) {
         int[] location = new int[map[0].length];
         for (int i = 0; i < map[0].length; i++) {
             location[i] = i;
         }
         for (int i = 0; i < map[0].length; i++) {
-            int index2 = new Random(new Date().getTime()).nextInt(map[0].length);
+            int index2 = randomGenerator.nextInt(map[0].length);
             int temp = location[i];
             location[i] = location[index2];
             location[index2] = temp;
