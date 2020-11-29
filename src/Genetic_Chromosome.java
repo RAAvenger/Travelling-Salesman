@@ -1,4 +1,3 @@
-import java.util.Date;
 import java.util.Random;
 
 public class Genetic_Chromosome implements Comparable {
@@ -6,12 +5,13 @@ public class Genetic_Chromosome implements Comparable {
     int relativeFitness;
     int[] genes;
     int[][] regionMap;
-    private Random randomGenerator = new Random(new Date().getTime());
+    private Random randomGenerator;
 
-    public Genetic_Chromosome(int[][] map, int[] genes) {
+    public Genetic_Chromosome(int[][] map, int[] genes, Random randomGenerator) {
         this.genes = genes;
         regionMap = map;
         unfitness = CalculateUnfitness();
+        this.randomGenerator = randomGenerator;
     }
 
     /**
@@ -87,6 +87,5 @@ public class Genetic_Chromosome implements Comparable {
                 return false;
         }
         return true;
-
     }
 }
