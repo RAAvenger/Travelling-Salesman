@@ -2,13 +2,26 @@ import java.util.LinkedList;
 
 public class LocalBeamSearch_LineOfLight implements Comparable {
     int cost;
-    int[] lineOfLight;
+    int[] linePoints;
     int[][] regionMap;
 
-    public LocalBeamSearch_LineOfLight(int[][] regionMap, int[] lineOfLight) {
+    public LocalBeamSearch_LineOfLight(int[][] regionMap, int[] linePoints) {
         this.regionMap = regionMap;
-        this.lineOfLight = lineOfLight;
+        this.linePoints = linePoints;
         cost = CalculateCost();
+    }
+
+    /**
+     * create a string to show step cost and path.
+     *
+     * @return string.
+     */
+    public String Print() {
+        String result = "Cost: " + this.cost + "\nPath: ";
+        for (int i = 0; i < linePoints.length; i++)
+            result += "" + linePoints[i] + ", ";
+        result += "" + linePoints[0] + ", ";
+        return result + "\b\b.";
     }
 
     /**
@@ -18,12 +31,12 @@ public class LocalBeamSearch_LineOfLight implements Comparable {
      */
     public int CalculateCost() {
         int city1, city2, cost = 0;
-        for (int i = 0; i + 1 < lineOfLight.length; i++) {
-            city1 = lineOfLight[i];
-            city2 = lineOfLight[i + 1];
+        for (int i = 0; i + 1 < linePoints.length; i++) {
+            city1 = linePoints[i];
+            city2 = linePoints[i + 1];
             cost += regionMap[city1][city2];
         }
-        cost += regionMap[lineOfLight[lineOfLight.length - 1]][lineOfLight[0]];
+        cost += regionMap[linePoints[linePoints.length - 1]][linePoints[0]];
         return cost;
     }
 
@@ -34,9 +47,9 @@ public class LocalBeamSearch_LineOfLight implements Comparable {
      */
     public LinkedList<LocalBeamSearch_LineOfLight> GetCloseLinesOfLight() {
         LinkedList<LocalBeamSearch_LineOfLight> linesOfLight = new LinkedList<>();
-        for (int i = 0; i < lineOfLight.length; i++) {
-            for (int j = i + 1; i < lineOfLight.length; i++) {
-                int[] newNeighborLocation = SwapCities(i, j, lineOfLight);
+        for (int i = 0; i < linePoints.length; i++) {
+            for (int j = i + 1; j < linePoints.length; j++) {
+                int[] newNeighborLocation = SwapCities(i, j, linePoints);
                 linesOfLight.add(new LocalBeamSearch_LineOfLight(regionMap, newNeighborLocation));
             }
         }
@@ -65,16 +78,15 @@ public class LocalBeamSearch_LineOfLight implements Comparable {
         return cost - object.cost;
     }
 
-    /**
-     * create a string to show step cost and path.
-     *
-     * @return string.
-     */
-    public String Print() {
-        String result = "Cost: " + this.cost + "\nPath: ";
-        for (int i = 0; i < lineOfLight.length; i++)
-            result += "" + lineOfLight[i] + ", ";
-        result += "" + lineOfLight[0] + ", ";
-        return result + "\b\b.";
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        LocalBeamSearch_LineOfLight c = (LocalBeamSearch_LineOfLight) obj;
+        for (int i = 0; i < linePoints.length; i++) {
+            if (c.linePoints[i] != linePoints[i])
+                return false;
+        }
+        return true;
     }
 }
