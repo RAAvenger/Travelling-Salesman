@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class TravellingSalesman {
-    int tryTimeSec = 3000;
+    int tryTimeSec = 10;
     private Random randomGenerator = new Random(new Date().getTime());
 
     public static void main(String[] args) throws Exception {
@@ -38,20 +38,48 @@ public class TravellingSalesman {
      */
     private void Algorithm2(int[][] map) throws Exception {
         int beamWidth = 10;
-//        for (int resets = 3; resets > 0; resets--) {
-        LinkedList<LocalBeamSearch_LineOfLight> startingBeam = new LinkedList<LocalBeamSearch_LineOfLight>();
-        for (int i = 0; i < beamWidth; i++) {
-            startingBeam.add(new LocalBeamSearch_LineOfLight(map, CreateRandomOrderOfCities(map)));
+        LinkedList<LocalBeamSearch_LineOfLight> prevAnswers = new LinkedList<>();
+        for (int resets = 5; resets > 0; resets--) {
+            LinkedList<LocalBeamSearch_LineOfLight> startingBeam = new LinkedList<>(prevAnswers);
+            /*//cheating part
+            startingBeam.add(new LocalBeamSearch_LineOfLight(map, new int[]{
+                    89, 87, 43, 11, 93, 79, 5, 47, 53, 7
+                    , 45, 80, 28, 69, 66, 40, 71, 49, 46
+                    , 64, 81, 60, 9, 88, 77, 26, 86, 92
+                    , 18, 16, 0, 36, 98, 13, 50, 70, 38
+                    , 25, 21, 29, 12, 59, 96, 61, 51, 85
+                    , 52, 57, 14, 83, 1, 31, 73, 33, 27
+                    , 58, 97, 91, 24, 19, 65, 10, 72, 23
+                    , 48, 62, 55, 76, 42, 68, 75, 39, 90
+                    , 30, 84, 67, 82, 6, 37, 35, 3, 20
+                    , 56, 41, 78, 8, 74, 63, 2, 17, 99
+                    , 4, 44, 95, 32, 22, 54, 94, 34, 15
+            }));*/
+            while (startingBeam.size() < beamWidth) {
+                startingBeam.add(new LocalBeamSearch_LineOfLight(map, CreateRandomOrderOfCities(map)));
+            }
+            LocalBeamSearch_BeamOfLight beam = new LocalBeamSearch_BeamOfLight(map, startingBeam, beamWidth, randomGenerator);
+            long startTime = new Date().getTime();
+            int bestCost = beam.GetMinCostInBeam();
+            int currentBeamSize = beamWidth;
+            while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
+                int randomFactor = (int) (((startTime + tryTimeSec * 1000) - new Date().getTime()) / (tryTimeSec));
+                beam.CreateNextBeam(randomFactor / 2, currentBeamSize);
+                /** when we cant find a better path we extend our searching area. */
+                int beamBestCost = beam.GetMinCostInBeam();
+                if (bestCost > beamBestCost) {
+                    bestCost = beamBestCost;
+                    currentBeamSize = beamWidth;
+                } else {
+                    currentBeamSize += 20;
+                }
+                System.out.println(beam.PrintBestPath());
+            }
+            System.out.println("__________________________________________________________________________________________");
+            LocalBeamSearch_LineOfLight newBestPath = new LocalBeamSearch_LineOfLight(map, beam.GetBestPath());
+            if (!prevAnswers.contains(newBestPath))
+                prevAnswers.add(newBestPath);
         }
-        LocalBeamSearch_BeamOfLight beam = new LocalBeamSearch_BeamOfLight(map, startingBeam, beamWidth, randomGenerator);
-        long startTime = new Date().getTime();
-//        while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
-        while (true) {
-            int randomFactor = (int) (((startTime + tryTimeSec * 1000) - new Date().getTime()) / (tryTimeSec));
-            beam.CreateNextBeam(randomFactor / 3);
-            System.out.println(beam.PrintBestPath());
-        }
-//        }
     }
 
     /**
@@ -62,7 +90,7 @@ public class TravellingSalesman {
         int generationPopulation = 10;
         LinkedList<Genetic_Chromosome> startingChromosoms = new LinkedList<>();
         while (startingChromosoms.size() < generationPopulation) {
-            Genetic_Chromosome newChromosome = new Genetic_Chromosome(map, CreateRandomOrderOfCities(map));
+            Genetic_Chromosome newChromosome = new Genetic_Chromosome(map, CreateRandomOrderOfCities(map), randomGenerator);
             if (!startingChromosoms.contains(newChromosome))
                 startingChromosoms.add(newChromosome);
         }
