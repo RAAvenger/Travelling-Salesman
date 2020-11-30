@@ -124,14 +124,14 @@ public class Genetic_Population {
             for (int firstIndex = part[0][0], secondIndex = part[1][0]; firstIndex < part[0][1]; firstIndex++, secondIndex++) {
                 NewChromosomeGenes[firstIndex] = secondChromosome[secondIndex];
             }
-            Genetic_Chromosome newChromosome = new Genetic_Chromosome(regionMap, NewChromosomeGenes);
+            Genetic_Chromosome newChromosome = new Genetic_Chromosome(regionMap, NewChromosomeGenes, randomGenerator);
             if (!newChromosomes.contains(newChromosome))
                 newChromosomes.add(newChromosome);
             NewChromosomeGenes = secondChromosome.clone();
             for (int firstIndex = part[0][0], secondIndex = part[1][0]; firstIndex < part[0][1]; firstIndex++, secondIndex++) {
                 NewChromosomeGenes[secondIndex] = firstChromosome[firstIndex];
             }
-            newChromosome = new Genetic_Chromosome(regionMap, NewChromosomeGenes);
+            newChromosome = new Genetic_Chromosome(regionMap, NewChromosomeGenes, randomGenerator);
             if (!newChromosomes.contains(newChromosome))
                 newChromosomes.add(newChromosome);
         }
@@ -184,9 +184,9 @@ public class Genetic_Population {
      *
      * @param map      matrix of booleans that represent equality or not equality of values of two arrays in each index.
      * @param partSize size of the part( matrix ) that will be checked.
-     * @param xStart
-     * @param yStart
-     * @return
+     * @param xStart   start index of first array.
+     * @param yStart   start index of second array.
+     * @return "true" if two parts are swappable, otherwise "false".
      */
     private boolean IsSwappable(boolean[][] map, int partSize, int xStart, int yStart) {
         int temp = 0;
@@ -196,10 +196,7 @@ public class Genetic_Population {
                     temp++;
             }
         }
-        if (temp == partSize)
-            return true;
-        else
-            return false;
+        return temp == partSize ? true : false;
     }
 
     /**
