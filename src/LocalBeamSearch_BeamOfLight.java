@@ -46,7 +46,7 @@ public class LocalBeamSearch_BeamOfLight {
         for (LocalBeamSearch_LineOfLight line : tempLinesOfLight) {
             LinkedList<LocalBeamSearch_LineOfLight> newLines = line.GetCloseLinesOfLight();
             for (LocalBeamSearch_LineOfLight newLine : newLines) {
-                if (newLine.cost < worstCostInBeam)
+                if (newLine.cost < worstCostInBeam && !linesOfLight.contains(newLine))
                     AddNewLineOfLightToBeam(newLine);
                 else {
                     int score = randomGenerator.nextInt(1000);

@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class TravellingSalesman {
-    int tryTimeSec = 10;
+    int tryTimeSec = 3000;
     private Random randomGenerator = new Random(new Date().getTime());
 
     public static void main(String[] args) throws Exception {
@@ -45,31 +45,36 @@ public class TravellingSalesman {
         }
         LocalBeamSearch_BeamOfLight beam = new LocalBeamSearch_BeamOfLight(map, startingBeam, beamWidth, randomGenerator);
         long startTime = new Date().getTime();
-        while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
+//        while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
+        while (true) {
             int randomFactor = (int) (((startTime + tryTimeSec * 1000) - new Date().getTime()) / (tryTimeSec));
             beam.CreateNextBeam(randomFactor / 3);
+            System.out.println(beam.PrintBestPath());
         }
-        System.out.println(beam.PrintBestPath());
 //        }
     }
 
-//    /**
-//     * solve travelling salesman by Genetic Algorithm.
-//     */
-//    private void Algorithm3(int[][] map) {
-//        Genetic_Population population;
-//        LinkedList<Genetic_Chromosome> startingChromosoms = new LinkedList<>();
-//        for (int i = 0; i < 10; i++) {
-//            startingChromosoms.add(new Genetic_Chromosome(map, CreateRandomOrderOfCities(map)));
-//        }
-//        population = new Genetic_Population(map, startingChromosoms, 10);
-//        long startTime = new Date().getTime();
-////        while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
-//        while (true) {
-//            population.CreateNextGeneration((int) (((tryTimeSec * 1000 - (new Date().getTime())) / tryTimeSec * 1000) * 1000));
-//        }
-////        System.out.println(bestPath.Print());
-//    }
+    /**
+     * solve travelling salesman by Genetic Algorithm.
+     */
+    private void Algorithm3(int[][] map) {
+        Genetic_Population population;
+        int generationPopulation = 10;
+        LinkedList<Genetic_Chromosome> startingChromosoms = new LinkedList<>();
+        while (startingChromosoms.size() < generationPopulation) {
+            Genetic_Chromosome newChromosome = new Genetic_Chromosome(map, CreateRandomOrderOfCities(map));
+            if (!startingChromosoms.contains(newChromosome))
+                startingChromosoms.add(newChromosome);
+        }
+        population = new Genetic_Population(map, startingChromosoms, generationPopulation, randomGenerator);
+        long startTime = new Date().getTime();
+//        while (new Date().getTime() < startTime + (this.tryTimeSec * 1000)) {
+        while (true) {
+            int randomFactor = (int) (((startTime + tryTimeSec * 1000) - new Date().getTime()) / (tryTimeSec));
+            population.CreateNextGeneration(randomFactor);
+            System.out.println(population.PrintBestPath());
+        }
+    }
 
     /**
      * create a step with random order of cities.
